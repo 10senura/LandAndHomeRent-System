@@ -231,7 +231,6 @@ section {
     }
 
     .menu-btn {
-         background: url(bars-solid.svg);
          background-size: 30px;
          background-repeat: no-repeat;
          width: 40px;
@@ -241,7 +240,6 @@ section {
     }
     .menu-btn.active {
          z-index: 999;
-         background: url(xmark-solid.svg);
          background-repeat: no-repeat;
          background-size: 25px;
          background-position: center;
