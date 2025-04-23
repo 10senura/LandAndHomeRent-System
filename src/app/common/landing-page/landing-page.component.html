@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DreamHome - Find Your Perfect Property</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    html {
+      scroll-behavior: smooth;
+    }
+    
+    body {
+      background: linear-gradient(to bottom, #f0f7ff, #e6f0ff);
+      color: #333;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    
+    /* Utility classes */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .flex {
+      display: flex;
+    }
+    
+    .items-center {
+      align-items: center;
+    }
+    
+    .justify-between {
+      justify-content: space-between;
+    }
+    
+    .grid {
+      display: grid;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+    
+    .btn-primary {
+      background-color: #1a56db;
+      color: white;
+      border: none;
+    }
+    
+    .btn-primary:hover {
+      background-color: #1644ad;
+      transform: translateY(-2px);
+    }
+    
+    .btn-outline {
+      background-color: transparent;
+      color: #1a56db;
+      border: 2px solid #1a56db;
+    }
+    
+    .btn-outline:hover {
+      background-color: #f0f7ff;
+      transform: translateY(-2px);
+    }
+    
+    section {
+      padding: 80px 0;
+    }
+    
+    h1, h2, h3 {
+      color: #1e293b;
+    }
+    
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: white;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-container {
+      height: 70px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #1a56db;
+      text-decoration: none;
+    }
+    
+    .logo svg {
+      margin-right: 8px;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+    
+    .nav-links a {
+      color: #4b5563;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+      display: flex;
+      align-items: center;
+    }
+    
+    .nav-links a:hover {
+      color: #1a56db;
+    }
+    
+    .nav-links a svg {
+      margin-right: 5px;
+    }
+    
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.5rem;
+      color: #4b5563;
+    }
+    
+    .mobile-menu {
+      display: none;
+      position: absolute;
+      top: 70px;
+      left: 0;
+      right: 0;
+      background-color: white;
+      padding: 1rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      z-index: 999;
+    }
+    
+    .mobile-menu a {
+      display: block;
+      padding: 0.75rem 1rem;
+      color: #4b5563;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+    
+    .mobile-menu a:hover {
+      background-color: #f0f7ff;
+      color: #1a56db;
+    }
+    
+    /* Hero Section */
+    #home {
+      padding-top: 90px;
+      padding-bottom: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      align-items: center;
+    }
+    
+    .hero-content h1 {
+      font-size: 3rem;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      color: #1e293b;
+    }
+    
+    .hero-content p {
+      font-size: 1.125rem;
+      color: #4b5563;
+      margin-bottom: 2rem;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .hero-3d-container {
+      width: 100%;
+      height: 400px;
+      border-radius: 12px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Categories Section */
+    #categories {
+      background-color: white;
+    }
+    
+    .section-title {
+      font-size: 2rem;
+      text-align: center;
+      margin-bottom: 3rem;
+      position: relative;
+    }
+    
+    .section-title::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background-color: #1a56db;
+      margin: 1rem auto 0;
+      border-radius: 2px;
+    }
+    
+    .categories-grid {
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    
+    .category-card {
+      background-color: #f0f7ff;
+      border-radius: 12px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    
+    .category-card.animate {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .category-card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
+    }
+    
+    .category-icon {
+      width: 50px;
+      height: 50px;
+      color: #1a56db;
+      margin-bottom: 1rem;
+    }
+    
+    .category-card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .category-card p {
+      color: #6b7280;
+    }
+    
+    /* About Section */
+    #about {
+      background-color: #f0f7ff;
+    }
+    
+    .about-content {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+    }
+    
+    .about-content p {
+      font-size: 1.125rem;
+      color: #4b5563;
+      margin-bottom: 1.5rem;
+      line-height: 1.7;
+    }
+    
+    /* Properties Section */
+    #properties {
+      background-color: white;
+    }
+    
+    .properties-grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .property-card {
+      background-color: #f0f7ff;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    
+    .property-card.animate {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .property-card:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transform: translateY(-5px);
+    }
+    
+    .property-image {
+      height: 200px;
+      background-color: #dbeafe;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .property-image::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.3));
+      z-index: 1;
+    }
+    
+    .property-image svg {
+      width: 60px;
+      height: 60px;
+      color: #1a56db;
+      z-index: 2;
+    }
+    
+    .property-details {
+      padding: 1.5rem;
+    }
+    
+    .property-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    
+    .property-type {
+      background-color: #1a56db;
+      color: white;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+    }
+    
+    .property-price {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1a56db;
+      margin-bottom: 1rem;
+    }
+    
+    .property-features {
+      display: flex;
+      color: #6b7280;
+    }
+    
+    .property-features span {
+      margin-right: 1rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .property-features svg {
+      margin-right: 0.25rem;
+    }
+    
+    /* Testimonials */
+    #testimonials {
+      background-color: #f0f7ff;
+    }
+    
+    .testimonials-grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    
+    .testimonial-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .testimonial-content {
+      margin-bottom: 1.5rem;
+      font-style: italic;
+      color: #4b5563;
+    }
+    
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+    }
+    
+    .testimonial-author img {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 1rem;
+    }
+    
+    .author-info h4 {
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+    }
+    
+    .author-info p {
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+    
+    /* Contact Section */
+    #contact {
+      background-color: white;
+    }
+    
+    .contact-form-container {
+      max-width: 700px;
+      margin: 0 auto;
+      background-color: #f0f7ff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #4b5563;
+      font-weight: 500;
+    }
+    
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus {
+      outline: none;
+      border-color: #1a56db;
+      box-shadow: 0 0 0 3px rgba(26, 86, 219, 0.1);
+    }
+    
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .form-submit {
+      text-align: center;
+    }
+    
+    /* Footer */
+    footer {
+      background-color: #1e293b;
+      color: white;
+      padding: 60px 0 30px;
+    }
+    
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin-bottom: 1rem;
+      color: white;
+      text-decoration: none;
+    }
+    
+    .footer-logo svg {
+      margin-right: 8px;
+      color: #60a5fa;
+    }
+    
+    .footer-about {
+      color: #9ca3af;
+      margin-bottom: 1rem;
+    }
+    
+    .social-links {
+      display: flex;
+      gap: 1rem;
+    }
+    
+    .social-links a {
+      color: #9ca3af;
+      font-size: 1.25rem;
+      transition: color 0.3s ease;
+    }
+    
+    .social-links a:hover {
+      color: white;
+    }
+    
+    .footer-heading {
+      font-size: 1.125rem;
+      margin-bottom: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .footer-links {
+      list-style: none;
+    }
+    
+    .footer-links li {
+      margin-bottom: 0.75rem;
+    }
+    
+    .footer-links a {
+      color: #9ca3af;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    
+    .footer-links a:hover {
+      color: white;
+    }
+    
+    .footer-contact {
+      color: #9ca3af;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+    }
+    
+    .footer-contact svg {
+      margin-right: 0.5rem;
+    }
+    
+    .footer-newsletter {
+      display: flex;
+      margin-top: 1rem;
+    }
+    
+    .footer-newsletter input {
+      flex-grow: 1;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 8px 0 0 8px;
+      background-color: #374151;
+      color: white;
+    }
+    
+    .footer-newsletter input::placeholder {
+      color: #9ca3af;
+    }
+    
+    .footer-newsletter button {
+      background-color: #1a56db;
+      color: white;
+      border: none;
+      padding: 0 1rem;
+      border-radius: 0 8px 8px 0;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    
+    .footer-newsletter button:hover {
+      background-color: #1644ad;
+    }
+    
+    .footer-bottom {
+      border-top: 1px solid #374151;
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 0.875rem;
+    }
+    
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .animate {
+      animation: fadeIn 0.6s ease forwards;
+    }
+    
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .mobile-menu.active {
+        display: block;
+      }
+      
+      .hero-container {
+        grid-template-columns: 1fr;
+      }
+      
+      .hero-content {
+        order: 1;
+      }
+      
+      .hero-3d-container {
+        order: 0;
+        height: 300px;
+        margin-bottom: 2rem;
+      }
+      
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      
+      .hero-content h1 {
+        font-size: 2.25rem;
+      }
+      
+      section {
+        padding: 60px 0;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .hero-buttons {
+        flex-direction: column;
+      }
+      
+      .hero-content h1 {
+        font-size: 1.75rem;
+      }
+      
+      .section-title {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav>
+    <div class="container nav-container flex items-center justify-between">
+      <a href="#home" class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+          <polyline points="9 22 9 12 15 12 15 22"></polyline>
+        </svg>
+        DreamHome
+      </a>
+      
+      <ul class="nav-links">
+        <li>
+          <a href="#home">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            Home
+          </a>
+        </li>
+        <li>
+          <a href="#categories">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="2" ry="2"></rect>
+              <line x1="2" y1="12" x2="22" y2="12"></line>
+              <line x1="12" y1="2" x2="12" y2="22"></line>
+            </svg>
+            Categories
+          </a>
+        </li>
+        <li>
+          <a href="#about">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            About
+          </a>
+        </li>
+        <li>
+          <a href="#properties">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="4" y="4" width="16" height="16" rx="2" ry="2"></rect>
+              <rect x="9" y="9" width="6" height="6"></rect>
+              <line x1="9" y1="1" x2="9" y2="4"></line>
+              <line x1="15" y1="1" x2="15" y2="4"></line>
+              <line x1="9" y1="20" x2="9" y2="23"></line>
+              <line x1="15" y1="20" x2="15" y2="23"></line>
+              <line x1="20" y1="9" x2="23" y2="9"></line>
+              <line x1="20" y1="14" x2="23" y2="14"></line>
+              <line x1="1" y1="9" x2="4" y2="9"></line>
+              <line x1="1" y1="14" x2="4" y2="14"></line>
+            </svg>
+            Properties
+          </a>
+        </li>
+        <li>
+          <a href="#contact">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+            Contact
+          </a>
+        </li>
+      </ul>
+      
+      <button class="mobile-menu-btn" id="mobile-menu-toggle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="mobile-menu" id="mobile-menu">
+      <a href="#home">Home</a>
+      <a href="#categories">Categories</a>
+      <a href="#about">About</a>
+      <a href="#properties">Properties</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section with 3D Model -->
+  <section id="home">
+    <div class="container hero-container">
+      <div class="hero-content">
+        <h1>Find Your Dream Home</h1>
+        <p>Discover the perfect property for buying or renting with our interactive platform. We offer a wide range of properties to suit your needs and budget.</p>
+        <div class="hero-buttons">
+          <a href="#properties" class="btn btn-primary">Buy Property</a>
+          <a href="#properties" class="btn btn-outline">Rent Property</a>
+        </div>
+      </div>
+      <div class="hero-3d-container" id="threejs-container"></div>
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  <section id="categories">
+    <div class="container">
+      <h2 class="section-title">Property Categories</h2>
+      <div class="grid categories-grid">
+        <div class="category-card">
+          <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <h3>Apartments</h3>
+          <p>Discover our selection of quality apartments in prime locations.</p>
+        </div>
+        
+        <div class="category-card">
+          <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <h3>Houses</h3>
+          <p>Explore our collection of beautiful houses for your family.</p>
+        </div>
+        
+        <div class="category-card">
+          <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <h3>Villas</h3>
+          <p>Find luxury villas with amazing views and premium amenities.</p>
+        </div>
+        
+        <div class="category-card">
+          <svg class="category-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          <h3>Offices</h3>
+          <p>Choose from our range of office spaces for your business needs.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Section -->
+  <section id="about">
+    <div class="container">
+      <h2 class="section-title">About Us</h2>
+      <div class="about-content">
+        <p>We are a premium real estate company dedicated to helping you find your perfect home. With years of experience in the market, we provide exceptional service and the best properties available.</p>
+        <p>Our team of experts is always ready to assist you in making the right choice for your needs and budget. We believe that everyone deserves to find their dream home, and we're here to make that happen.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Properties Section -->
+  <section id="properties">
+    <div class="container">
+      <h2 class="section-title">Featured Properties</h2>
+      <div class="grid properties-grid">
+        <!-- Property 1 -->
+        <div class="property-card">
+          <div class="property-image">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </div>
+          <div class="property-details">
+            <div class="property-header">
+              <h3>Modern Apartment</h3>
+              <span class="property-type">For Sale</span>
+            </div>
+            <p class="property-price">$250,000</p>
+            <div class="property-features">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <path d="M9 22V12h6v10"></path>
+                </svg>
+                2 Beds
+              </span>
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <path d="M9 22V12h6v10"></path>
+                </svg>
+                1 Bath
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Property 2 -->
+        <div class="property-card">
+          <div class="property-image">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </div>
+          <div class="property-details">
+            <div class="property-header">
+              <h3>Luxury Villa</h3>
+              <span class="property-type">For Sale</span>
+            </div>
+            <p class="property-price">$1,200,000</p>
+            <div class="property-features">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <path d="M9 22V12h6v10"></path>
+                </svg>
+                5 Beds
+              </span>
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <path d="M9 22V12h6v10"></path>
+                </svg>
+                4 Baths
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Property 3 -->
+        <div class="property-card">
+          <div class="property-image">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </div>
+          <div class="property-details">
+            <div class="property-header">
+              <h3>Downtown Studio</h3>
+              <span class="property-type">For Rent</span>
+            </div>
+            <p class="property-price">$1,200/mo</p>
+            <div class="property-features">
+              <span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H
